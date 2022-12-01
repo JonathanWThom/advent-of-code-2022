@@ -1,29 +1,37 @@
 package day_1
 
 import (
+	"sort"
 	"strconv"
 
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
+func GetTopThreeCalories(path string) int {
+	counts := getSortedCalorieCounts(path)
+	return counts[len(counts)-1] + counts[len(counts)-2] + counts[len(counts)-3]
+}
+
 func GetMostCalories(path string) int {
+	counts := getSortedCalorieCounts(path)
+	return counts[len(counts)-1]
+}
+
+func getSortedCalorieCounts(path string) []int {
 	lines := helpers.ReadLines(path)
 	var currentCals int
-	var bestCals int
+	counts := []int{}
 
-	for _, line := range lines {
-		if line == "" {
-			if currentCals > bestCals {
-				bestCals = currentCals
-			}
-			currentCals = 0
-
-			continue
-		}
-
+	for i, line := range lines {
 		cals, _ := strconv.Atoi(line)
 		currentCals += cals
-	}
 
-	return bestCals
+		if line == "" || (i == len(lines)-1) {
+			counts = append(counts, currentCals)
+			currentCals = 0
+		}
+	}
+	sort.Ints(counts)
+
+	return counts
 }
