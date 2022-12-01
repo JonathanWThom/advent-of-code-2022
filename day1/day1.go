@@ -1,4 +1,4 @@
-package day_1
+package day1
 
 import (
 	"sort"
@@ -20,7 +20,7 @@ func GetMostCalories(path string) int {
 func getSortedCalorieCounts(path string) []int {
 	lines := helpers.ReadLines(path)
 	var currentCals int
-	counts := []int{}
+	var counts []int
 
 	for i, line := range lines {
 		cals, _ := strconv.Atoi(line)
