@@ -1,39 +1,61 @@
 package day2
 
 import (
-	"reflect"
 	"strings"
 
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
+
+const rockNm = "rock"
+const paperNm = "paper"
+const scissorsNm = "scissors"
 
 type rpsMove interface {
 	vsPaper() int
 	vsRock() int
 	vsScissors() int
 	baseVal() int
+	winsAgainst() rpsMove
+	drawsAgainst() rpsMove
+	losesAgainst() rpsMove
+	name() string
 }
 
 type rock struct{}
 
-func (r rock) vsPaper() int    { return 0 }
-func (r rock) vsRock() int     { return 3 }
-func (r rock) vsScissors() int { return 6 }
-func (r rock) baseVal() int    { return 1 }
+func (rock) vsPaper() int          { return 0 }
+func (rock) vsRock() int           { return 3 }
+func (rock) vsScissors() int       { return 6 }
+func (rock) baseVal() int          { return 1 }
+func (rock) winsAgainst() rpsMove  { return scissors{} }
+func (rock) drawsAgainst() rpsMove { return rock{} }
+func (rock) losesAgainst() rpsMove { return paper{} }
+
+func (rock) name() string { return rockNm }
 
 type paper struct{}
 
-func (r paper) vsPaper() int    { return 3 }
-func (r paper) vsRock() int     { return 6 }
-func (r paper) vsScissors() int { return 0 }
-func (r paper) baseVal() int    { return 2 }
+func (paper) vsPaper() int          { return 3 }
+func (paper) vsRock() int           { return 6 }
+func (paper) vsScissors() int       { return 0 }
+func (paper) baseVal() int          { return 2 }
+func (paper) winsAgainst() rpsMove  { return rock{} }
+func (paper) drawsAgainst() rpsMove { return paper{} }
+func (paper) losesAgainst() rpsMove { return scissors{} }
+
+func (paper) name() string { return paperNm }
 
 type scissors struct{}
 
-func (r scissors) vsPaper() int    { return 6 }
-func (r scissors) vsRock() int     { return 0 }
-func (r scissors) vsScissors() int { return 3 }
-func (r scissors) baseVal() int    { return 3 }
+func (scissors) vsPaper() int          { return 6 }
+func (scissors) vsRock() int           { return 0 }
+func (scissors) vsScissors() int       { return 3 }
+func (scissors) baseVal() int          { return 3 }
+func (scissors) winsAgainst() rpsMove  { return paper{} }
+func (scissors) drawsAgainst() rpsMove { return scissors{} }
+func (scissors) losesAgainst() rpsMove { return rock{} }
+
+func (scissors) name() string { return scissorsNm }
 
 func getMove(rawMv string) rpsMove {
 	return map[string]rpsMove{
@@ -48,10 +70,10 @@ func getMove(rawMv string) rpsMove {
 
 func getGameResult(opMv, elMv rpsMove) int {
 	return map[string]int{
-		"day2.rock":     elMv.vsRock(),
-		"day2.paper":    elMv.vsPaper(),
-		"day2.scissors": elMv.vsScissors(),
-	}[reflect.TypeOf(opMv).String()]
+		rockNm:     elMv.vsRock(),
+		paperNm:    elMv.vsPaper(),
+		scissorsNm: elMv.vsScissors(),
+	}[opMv.name()]
 }
 
 func RpsScore(path string) int {
@@ -69,6 +91,25 @@ func RpsScore(path string) int {
 	return score
 }
 
-func Part2(path string) int {
-	return 0
+func getMoveWithTargetResult(rawMv string, opMv rpsMove) rpsMove {
+	return map[string]rpsMove{
+		"X": opMv.winsAgainst(),
+		"Y": opMv.drawsAgainst(),
+		"Z": opMv.losesAgainst(),
+	}[rawMv]
+}
+
+func RpsScoreWithTargetResult(path string) int {
+	var score int
+
+	lines := helpers.ReadLines(path)
+	for _, line := range lines {
+		moves := strings.Split(line, " ")
+		opMv := getMove(moves[0])
+		elMv := getMoveWithTargetResult(moves[1], opMv)
+
+		score += elMv.baseVal() + getGameResult(opMv, elMv)
+	}
+
+	return score
 }

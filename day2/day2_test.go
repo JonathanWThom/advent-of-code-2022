@@ -16,12 +16,12 @@ func TestRpsScore(t *testing.T) {
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestRpsScoreWithTargetResult(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		RpsScoreWithTargetResult,
+		"RpsScoreWithTargetResult",
+		12,
+		13022,
 	)
 }
