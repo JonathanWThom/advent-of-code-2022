@@ -12,19 +12,24 @@ type rucksack struct {
 }
 
 func (r *rucksack) getCommonItem() string {
-	items := map[string]bool{}
+	return getCommonItems(r.firstCompartment, r.secondCompartment)[0]
+}
 
-	for _, char := range strings.Split(r.firstCompartment, "") {
+func getCommonItems(str1, str2 string) []string {
+	items := map[string]bool{}
+	common := []string{}
+
+	for _, char := range strings.Split(str1, "") {
 		items[char] = true
 	}
 
-	for _, char := range strings.Split(r.secondCompartment, "") {
+	for _, char := range strings.Split(str2, "") {
 		if items[char] == true {
-			return char
+			common = append(common, char)
 		}
 	}
 
-	return ""
+	return common
 }
 
 const subForLowerAsciiVal = 96
@@ -63,6 +68,20 @@ func CommonRucksackItemsSum(path string) int {
 	return sum
 }
 
-func Part2(path string) int {
-	return 0
+func RucksackBadgeSum(path string) int {
+	lines := helpers.ReadLines(path)
+	var sum int
+	var group []string
+	for _, line := range lines {
+		group = append(group, line)
+
+		if len(group) == 3 {
+			firstTwoCommon := getCommonItems(group[0], group[1])
+			common := getCommonItems(strings.Join(firstTwoCommon, ""), group[2])
+			sum += getItemValue(common[0])
+			group = []string{}
+		}
+	}
+
+	return sum
 }

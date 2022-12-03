@@ -16,12 +16,12 @@ func TestCommonRucksackItemsSum(t *testing.T) {
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestRucksackBadgeSum(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		RucksackBadgeSum,
+		"RucksackBadgeSum",
+		70,
+		2525,
 	)
 }
