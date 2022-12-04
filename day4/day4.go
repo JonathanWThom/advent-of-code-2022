@@ -7,6 +7,7 @@ import (
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
+// FullContainedPairs = Part 1
 func FullyContainedPairs(path string) int {
 	var redundant int
 
@@ -21,6 +22,23 @@ func FullyContainedPairs(path string) int {
 	}
 
 	return redundant
+}
+
+// OverlappingPairs = Part 2
+func OverlappingPairs(path string) int {
+	var overlapping int
+
+	for _, line := range helpers.ReadLines(path) {
+		elfAssignments := strings.Split(line, ",")
+		elf1 := newElf(elfAssignments[0])
+		elf2 := newElf(elfAssignments[1])
+
+		if elf1.overlapsWith(elf2) {
+			overlapping++
+		}
+	}
+
+	return overlapping
 }
 
 type elf struct {
@@ -51,6 +69,13 @@ func (e *elf) overlapsFullyWith(otherElf *elf) bool {
 	return moreAssignments.start <= lessAssignments.start && moreAssignments.end >= lessAssignments.end
 }
 
-func Part2(path string) int {
-	return 0
+func (e *elf) overlapsWith(otherElf *elf) bool {
+	startsSooner := e
+	startsLater := otherElf
+
+	if startsSooner.start > startsLater.start {
+		startsSooner, startsLater = startsLater, startsSooner
+	}
+
+	return startsSooner.end >= startsLater.start
 }

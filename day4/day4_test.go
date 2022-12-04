@@ -12,16 +12,16 @@ func TestFullyContainedPairs(t *testing.T) {
 		FullyContainedPairs,
 		"FullyContainedPairs",
 		2,
-		0,
+		453,
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestOverlappingPairs(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		OverlappingPairs,
+		"OverlappingPairs",
+		4,
+		919,
 	)
 }
