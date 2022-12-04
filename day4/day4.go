@@ -7,7 +7,7 @@ import (
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
-// FullContainedPairs = Part 1
+// FullyContainedPairs = Part 1
 func FullyContainedPairs(path string) int {
 	var redundant int
 
