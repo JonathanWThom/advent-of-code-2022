@@ -2,8 +2,6 @@ package day5
 
 import (
 	"testing"
-
-	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
 func TestTopCrates(t *testing.T) {
@@ -32,15 +30,32 @@ func TestTopCrates(t *testing.T) {
 			}
 		})
 	}
-
 }
 
-func TestPart2(t *testing.T) {
-	helpers.TestsForFunction(
-		t,
-		Part2,
-		"Part2",
-		0,
-		0,
-	)
+func TestCrateMover9001(t *testing.T) {
+	tests := []struct {
+		path        string
+		expected    string
+		description string
+	}{
+		{path: "partial_input.txt", expected: "MCD", description: "Partial input"},
+		{path: "full_input.txt", expected: "BPCZJLFJW", description: "Full input"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+
+			actual := CrateMover9001(test.path)
+
+			if actual != test.expected {
+				t.Errorf(
+					"%s(%s) returned %v, expected %v",
+					"CrateMover9001",
+					test.path,
+					actual,
+					test.expected,
+				)
+			}
+		})
+	}
 }

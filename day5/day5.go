@@ -1,7 +1,6 @@
 package day5
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 
@@ -18,6 +17,26 @@ func TopCrates(path string) string {
 		if instrRe.MatchString(line) {
 			instruction := newInstruction(line)
 			stacks = applyInstruction(stacks, instruction)
+		}
+	}
+
+	var topCrates string
+	for i := 0; i < numStacks; i++ {
+		topCrates += stacks[i+1].lastCrate()
+	}
+
+	return topCrates
+}
+
+func CrateMover9001(path string) string {
+	lines := helpers.ReadLines(path)
+	numStacks := getNumberofStacks(lines)
+	stacks := buildStacks(lines, numStacks)
+
+	for _, line := range lines {
+		if instrRe.MatchString(line) {
+			instruction := newInstruction(line)
+			stacks = applyInstruction9001(stacks, instruction)
 		}
 	}
 
@@ -56,6 +75,17 @@ func applyInstruction(stacks map[int]*stack, instruction *instruction) map[int]*
 	return stacks
 }
 
+func applyInstruction9001(stacks map[int]*stack, instruction *instruction) map[int]*stack {
+	// 3rd to last
+	from := stacks[instruction.from]
+	to := stacks[instruction.to] // push in reverse order
+	crates := from.crates[len(from.crates)-instruction.move : len(from.crates)]
+	to.crates = append(to.crates, crates...)
+	from.crates = from.crates[:len(from.crates)-instruction.move]
+
+	return stacks
+}
+
 type stack struct {
 	crates []string
 }
@@ -70,7 +100,6 @@ func (s *stack) pushCrate(crate string) {
 }
 
 func (s *stack) popCrate() string {
-	fmt.Println(s)
 	crate := s.lastCrate()
 	s.crates = s.crates[:len(s.crates)-1]
 	return crate
