@@ -9,26 +9,15 @@ import (
 
 // TopCrates = Part 1
 func TopCrates(path string) string {
-	lines := helpers.ReadLines(path)
-	numStacks := getNumberofStacks(lines)
-	stacks := buildStacks(lines, numStacks)
-
-	for _, line := range lines {
-		if instrRe.MatchString(line) {
-			instruction := newInstruction(line)
-			stacks = applyInstruction(stacks, instruction)
-		}
-	}
-
-	var topCrates string
-	for i := 0; i < numStacks; i++ {
-		topCrates += stacks[i+1].lastCrate()
-	}
-
-	return topCrates
+	return getTopCrates(path, applyInstruction)
 }
 
+// CrateMover9001 = Part 2
 func CrateMover9001(path string) string {
+	return getTopCrates(path, applyInstruction9001)
+}
+
+func getTopCrates(path string, instructionFunc func(map[int]*stack, *instruction) map[int]*stack) string {
 	lines := helpers.ReadLines(path)
 	numStacks := getNumberofStacks(lines)
 	stacks := buildStacks(lines, numStacks)
@@ -36,7 +25,7 @@ func CrateMover9001(path string) string {
 	for _, line := range lines {
 		if instrRe.MatchString(line) {
 			instruction := newInstruction(line)
-			stacks = applyInstruction9001(stacks, instruction)
+			stacks = instructionFunc(stacks, instruction)
 		}
 	}
 
@@ -46,6 +35,7 @@ func CrateMover9001(path string) string {
 	}
 
 	return topCrates
+
 }
 
 var numRe = regexp.MustCompile(`\d+`)
@@ -76,9 +66,8 @@ func applyInstruction(stacks map[int]*stack, instruction *instruction) map[int]*
 }
 
 func applyInstruction9001(stacks map[int]*stack, instruction *instruction) map[int]*stack {
-	// 3rd to last
 	from := stacks[instruction.from]
-	to := stacks[instruction.to] // push in reverse order
+	to := stacks[instruction.to]
 	crates := from.crates[len(from.crates)-instruction.move : len(from.crates)]
 	to.crates = append(to.crates, crates...)
 	from.crates = from.crates[:len(from.crates)-instruction.move]
@@ -149,8 +138,4 @@ func getNumberofStacks(lines []string) int {
 	}
 
 	return num
-}
-
-func Part2(path string) int {
-	return 0
 }
