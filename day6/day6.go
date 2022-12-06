@@ -19,11 +19,9 @@ func StartOfMessageMarker(path string) int {
 func getMarker(path string, markerLen int) int {
 	lines := helpers.ReadLines(path)
 	chars := strings.Split(lines[0], "")
-	values := map[int]string{}
 
 loop:
 	for i, char := range chars {
-		values[i] = char
 		if i < markerLen-1 {
 			continue
 		}
@@ -32,10 +30,10 @@ loop:
 			char: true,
 		}
 		for j := i - 1; j > i-markerLen; j-- {
-			if miniValues[values[j]] == true {
+			if miniValues[chars[j]] == true {
 				continue loop
 			}
-			miniValues[values[j]] = true
+			miniValues[chars[j]] = true
 		}
 
 		return i + 1
