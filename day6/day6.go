@@ -26,14 +26,14 @@ loop:
 			continue
 		}
 
-		miniValues := map[string]bool{
+		recentSignals := map[string]bool{
 			char: true,
 		}
 		for j := i - 1; j > i-markerLen; j-- {
-			if miniValues[chars[j]] == true {
+			if recentSignals[chars[j]] == true {
 				continue loop
 			}
-			miniValues[chars[j]] = true
+			recentSignals[chars[j]] = true
 		}
 
 		return i + 1
