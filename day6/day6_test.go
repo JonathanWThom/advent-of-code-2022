@@ -12,16 +12,16 @@ func TestStartOfPacketMarker(t *testing.T) {
 		StartOfPacketMarker,
 		"StartOfPacketMarker",
 		7,
-		0,
+		1760,
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestStartOfMessageMarker(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		StartOfMessageMarker,
+		"StartOfMessageMarker",
+		19,
+		2974,
 	)
 }
