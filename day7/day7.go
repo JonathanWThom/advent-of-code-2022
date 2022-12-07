@@ -8,35 +8,43 @@ import (
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
+const deletableDirSize = 100000
+const totalSize = 70000000
+const minFreeSize = 30000000
+
 // DeletableDirectoriesSum = Part 1
 func DeletableDirectoriesSum(path string) int {
-	rootDir := buildDirectory(path)
+	rootDir := buildDirTree(path)
 
 	var total int
 	for _, dir := range rootDir.getDirectories() {
-		if dir.size <= 100000 {
-			total += dir.size
+		size := dir.getSize()
+		if size <= deletableDirSize {
+			total += size
 		}
 	}
 
 	return total
 }
 
+// DeletableDirectorySize = Part 2
 func DeletableDirectorySize(path string) int {
-	rootDir := buildDirectory(path)
-	unused := 70000000 - rootDir.size
-	needToClear := 30000000 - unused
-	clearableDir := rootDir
+	rootDir := buildDirTree(path)
+	unused := totalSize - rootDir.getSize()
+	needToClear := minFreeSize - unused
+	deletableSize := totalSize
+
 	for _, dir := range rootDir.getDirectories() {
-		if dir.size >= needToClear && dir.size < clearableDir.size {
-			clearableDir = dir
+		size := dir.getSize()
+		if size >= needToClear && size < deletableSize {
+			deletableSize = size
 		}
 	}
 
-	return clearableDir.size
+	return deletableSize
 }
 
-func buildDirectory(path string) directory {
+func buildDirTree(path string) directory {
 	rootDir := newDirectory("/")
 	var currentDir directory
 	var readingCurrentDir bool
@@ -81,7 +89,7 @@ func buildDirectory(path string) directory {
 		}
 	}
 
-	rootDir.getSize()
+	//rootDir.getSize()
 
 	return rootDir
 
@@ -167,8 +175,4 @@ func (d *directory) findOrCreateFile(fileName string, size int) file {
 	d.files[fileName] = &file
 
 	return file
-}
-
-func Part2(path string) int {
-	return 0
 }
