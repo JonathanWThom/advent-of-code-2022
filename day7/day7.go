@@ -48,9 +48,9 @@ var cdRe = regexp.MustCompile("\\$ cd")
 var lsRe = regexp.MustCompile("\\$ ls")
 var numRe = regexp.MustCompile("\\d+")
 
-func buildDirTree(path string) directory {
+func buildDirTree(path string) *directory {
 	rootDir := newDirectory()
-	var currentDir directory
+	var currentDir *directory
 
 	for _, line := range helpers.ReadLines(path) {
 		if cdRe.MatchString(line) {
@@ -58,11 +58,11 @@ func buildDirTree(path string) directory {
 			case "/":
 				currentDir = rootDir
 			case "..":
-				currentDir = *currentDir.parent
+				currentDir = currentDir.parent
 			default:
 				prevDir := currentDir
 				currentDir = currentDir.findOrCreateDir(instruction)
-				currentDir.parent = &prevDir
+				currentDir.parent = prevDir
 			}
 
 			continue
@@ -86,12 +86,16 @@ func getCdInstruction(line string) string {
 	return strings.Trim(strings.Split(line, "cd")[1], " ")
 }
 
+func newFile(size int) *file {
+	return &file{size: size}
+}
+
 type file struct {
 	size int
 }
 
-func newDirectory() directory {
-	return directory{
+func newDirectory() *directory {
+	return &directory{
 		directories: map[string]*directory{},
 		files:       map[string]*file{},
 	}
@@ -130,24 +134,24 @@ func (d *directory) getSize() int {
 	return d.size
 }
 
-func (d *directory) findOrCreateDir(dirName string) directory {
+func (d *directory) findOrCreateDir(dirName string) *directory {
 	if d.directories[dirName] != nil {
-		return *d.directories[dirName]
+		return d.directories[dirName]
 	}
 
 	dir := newDirectory()
-	d.directories[dirName] = &dir
+	d.directories[dirName] = dir
 
 	return dir
 }
 
-func (d *directory) findOrCreateFile(fileName string, size int) file {
+func (d *directory) findOrCreateFile(fileName string, size int) *file {
 	if d.files[fileName] != nil {
-		return *d.files[fileName]
+		return d.files[fileName]
 	}
 
-	file := file{size: size}
-	d.files[fileName] = &file
+	file := newFile(size)
+	d.files[fileName] = file
 
 	return file
 }
