@@ -69,13 +69,12 @@ func buildDirTree(path string) *directory {
 		}
 
 		sections := strings.Split(line, " ")
+		name := sections[1]
 		if numRe.MatchString(line) {
-			fileName := sections[1]
 			size, _ := strconv.Atoi(sections[0])
-			currentDir.findOrCreateFile(fileName, size)
+			currentDir.findOrCreateFile(name, size)
 		} else {
-			dirName := sections[1]
-			currentDir.findOrCreateDir(dirName)
+			currentDir.findOrCreateDir(name)
 		}
 	}
 
