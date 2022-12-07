@@ -8,10 +8,6 @@ import (
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
-const deletableDirSize = 100000
-const totalSize = 70000000
-const minFreeSize = 30000000
-
 // DeletableDirectoriesSum = Part 1
 func DeletableDirectoriesSum(path string) int {
 	rootDir := buildDirTree(path)
@@ -44,15 +40,20 @@ func DeletableDirectorySize(path string) int {
 	return deletableSize
 }
 
+const deletableDirSize = 100000
+const totalSize = 70000000
+const minFreeSize = 30000000
+
+var cdRe = regexp.MustCompile("\\$ cd")
+var lsRe = regexp.MustCompile("\\$ ls")
+var numRe = regexp.MustCompile("\\d+")
+
 func buildDirTree(path string) directory {
-	rootDir := newDirectory("/")
+	rootDir := newDirectory()
 	var currentDir directory
-	var readingCurrentDir bool
 
 	for _, line := range helpers.ReadLines(path) {
 		if cdRe.MatchString(line) {
-			readingCurrentDir = false
-
 			switch instruction := getCdInstruction(line); instruction {
 			case "/":
 				currentDir = rootDir
@@ -67,37 +68,19 @@ func buildDirTree(path string) directory {
 			continue
 		}
 
-		if lsRe.MatchString(line) {
-			readingCurrentDir = true
-
-			continue
-		}
-
-		if readingCurrentDir == true {
-			sections := strings.Split(line, " ")
-
-			if numRe.MatchString(line) {
-				fileName := sections[1]
-				size, _ := strconv.Atoi(sections[0])
-				currentDir.findOrCreateFile(fileName, size)
-			} else {
-				dirName := sections[1]
-				currentDir.findOrCreateDir(dirName)
-			}
-
-			continue
+		sections := strings.Split(line, " ")
+		if numRe.MatchString(line) {
+			fileName := sections[1]
+			size, _ := strconv.Atoi(sections[0])
+			currentDir.findOrCreateFile(fileName, size)
+		} else {
+			dirName := sections[1]
+			currentDir.findOrCreateDir(dirName)
 		}
 	}
 
-	//rootDir.getSize()
-
 	return rootDir
-
 }
-
-var cdRe = regexp.MustCompile("\\$ cd")
-var lsRe = regexp.MustCompile("\\$ ls")
-var numRe = regexp.MustCompile("\\d+")
 
 func getCdInstruction(line string) string {
 	return strings.Trim(strings.Split(line, "cd")[1], " ")
@@ -107,11 +90,10 @@ type file struct {
 	size int
 }
 
-func newDirectory(name string) directory {
+func newDirectory() directory {
 	return directory{
 		directories: map[string]*directory{},
 		files:       map[string]*file{},
-		name:        name,
 	}
 }
 
@@ -119,7 +101,6 @@ type directory struct {
 	files       map[string]*file
 	directories map[string]*directory
 	size        int
-	name        string
 	parent      *directory
 }
 
@@ -146,11 +127,6 @@ func (d *directory) getSize() int {
 		d.size += dir.getSize()
 	}
 
-	//if d.size <= 100000 {
-	//fmt.Println(d)
-	//total += d.size
-	//}
-
 	return d.size
 }
 
@@ -159,8 +135,7 @@ func (d *directory) findOrCreateDir(dirName string) directory {
 		return *d.directories[dirName]
 	}
 
-	dir := newDirectory(dirName)
-
+	dir := newDirectory()
 	d.directories[dirName] = &dir
 
 	return dir
