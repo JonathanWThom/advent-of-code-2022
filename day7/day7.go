@@ -10,6 +10,33 @@ import (
 
 // DeletableDirectoriesSum = Part 1
 func DeletableDirectoriesSum(path string) int {
+	rootDir := buildDirectory(path)
+
+	var total int
+	for _, dir := range rootDir.getDirectories() {
+		if dir.size <= 100000 {
+			total += dir.size
+		}
+	}
+
+	return total
+}
+
+func DeletableDirectorySize(path string) int {
+	rootDir := buildDirectory(path)
+	unused := 70000000 - rootDir.size
+	needToClear := 30000000 - unused
+	clearableDir := rootDir
+	for _, dir := range rootDir.getDirectories() {
+		if dir.size >= needToClear && dir.size < clearableDir.size {
+			clearableDir = dir
+		}
+	}
+
+	return clearableDir.size
+}
+
+func buildDirectory(path string) directory {
 	rootDir := newDirectory("/")
 	var currentDir directory
 	var readingCurrentDir bool
@@ -54,15 +81,10 @@ func DeletableDirectoriesSum(path string) int {
 		}
 	}
 
-	var total int
 	rootDir.getSize()
-	for _, dir := range rootDir.getDirectories() {
-		if dir.size <= 100000 {
-			total += dir.size
-		}
-	}
 
-	return total
+	return rootDir
+
 }
 
 var cdRe = regexp.MustCompile("\\$ cd")

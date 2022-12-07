@@ -12,16 +12,16 @@ func TestDeletableDirectoriesSum(t *testing.T) {
 		DeletableDirectoriesSum,
 		"DeletableDirectoriesSum",
 		95437,
-		0,
+		1582412,
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestDeletableDirectorySize(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		DeletableDirectorySize,
+		"DeletableDirectorySize",
+		24933642,
+		3696336,
 	)
 }
