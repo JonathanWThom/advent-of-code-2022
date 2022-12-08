@@ -2,7 +2,6 @@ package day8
 
 import (
 	"strconv"
-	"strings"
 
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
@@ -11,38 +10,26 @@ import (
 func VisibleTrees(path string) int {
 	var visible int
 
-	matrix := map[int]map[int]int{} // x, y, height var height int
-	var width int
-	var height int
+	lines := helpers.ReadLines(path)
+	height := len(lines)
+	width := len(lines[0])
+	forest := newForest(lines)
 
-	for x, line := range helpers.ReadLines(path) {
-		matrix[x] = map[int]int{}
-		height++
-		width = len(strings.Split(line, "")) // unnecessary to do every time
-		for y, rawHeight := range strings.Split(line, "") {
-			height, _ := strconv.Atoi(rawHeight)
-			matrix[x][y] = height
-		}
-	}
-
-	// get width, get height
-	// for each element in width and height, see if anything relevant is taller
-	// as you do it, access or assign the value.
-	// increment visible
 	for x := 0; x < height; x++ {
 		for y := 0; y < width; y++ {
 			if x == 0 || x == height-1 || y == 0 || y == width-1 {
 				visible++
 				continue
 			}
-			h := matrix[x][y]
+
+			h := forest.getValueAt(x, y)
 
 			var invisibleCounter int
 
 			// if any above are taller, it's not visible
 			i := x - 1
 			for i >= 0 {
-				if matrix[i][y] >= h {
+				if forest.getValueAt(i, y) >= h {
 					invisibleCounter++
 					break
 				}
@@ -52,8 +39,8 @@ func VisibleTrees(path string) int {
 
 			// if any below are taller
 			i = x + 1
-			for i <= height {
-				if matrix[i][y] >= h {
+			for i < height {
+				if forest.getValueAt(i, y) >= h {
 					invisibleCounter++
 					break
 				}
@@ -64,7 +51,7 @@ func VisibleTrees(path string) int {
 			// if any left are taller
 			i = y - 1
 			for i >= 0 {
-				if matrix[x][i] >= h {
+				if forest.getValueAt(x, i) >= h {
 					invisibleCounter++
 					break
 				}
@@ -74,8 +61,8 @@ func VisibleTrees(path string) int {
 
 			// if any right are taller
 			i = y + 1
-			for i <= width {
-				if matrix[x][i] >= h {
+			for i < width {
+				if forest.getValueAt(x, i) >= h {
 					invisibleCounter++
 					break
 				}
@@ -93,25 +80,16 @@ func VisibleTrees(path string) int {
 }
 
 func BestScenicScore(path string) int {
-	matrix := map[int]map[int]int{} // x, y, height var height int
-	var width int
-	var height int
-
-	for x, line := range helpers.ReadLines(path) {
-		matrix[x] = map[int]int{}
-		height++
-		width = len(strings.Split(line, "")) // unnecessary to do every time
-		for y, rawHeight := range strings.Split(line, "") {
-			height, _ := strconv.Atoi(rawHeight)
-			matrix[x][y] = height
-		}
-	}
+	lines := helpers.ReadLines(path)
+	height := len(lines)
+	width := len(lines[0])
+	forest := newForest(lines)
 
 	var bestScenicScore int
 
 	for x := 0; x < height; x++ {
 		for y := 0; y < width; y++ {
-			h := matrix[x][y]
+			h := forest.getValueAt(x, y)
 			var aboveDist int
 			var belowDist int
 			var leftDist int
@@ -119,11 +97,11 @@ func BestScenicScore(path string) int {
 
 			i := x - 1
 			for i >= 0 {
-				if matrix[i][y] < h {
+				if forest.getValueAt(i, y) < h {
 					aboveDist++
 				}
 
-				if matrix[i][y] >= h {
+				if forest.getValueAt(i, y) >= h {
 					aboveDist++
 					break
 				}
@@ -133,11 +111,11 @@ func BestScenicScore(path string) int {
 
 			i = x + 1
 			for i < height {
-				if matrix[i][y] < h {
+				if forest.getValueAt(i, y) < h {
 					belowDist++
 				}
 
-				if matrix[i][y] >= h {
+				if forest.getValueAt(i, y) >= h {
 					belowDist++
 					break
 				}
@@ -147,11 +125,11 @@ func BestScenicScore(path string) int {
 
 			i = y - 1
 			for i >= 0 {
-				if matrix[x][i] != 0 && matrix[x][i] < h {
+				if forest.getValueAt(x, i) != 0 && forest.getValueAt(x, i) < h {
 					leftDist++
 				}
 
-				if matrix[x][i] >= h {
+				if forest.getValueAt(x, i) >= h {
 					leftDist++
 					break
 				}
@@ -161,11 +139,11 @@ func BestScenicScore(path string) int {
 
 			i = y + 1
 			for i < width {
-				if matrix[x][i] != 0 && matrix[x][i] < h {
+				if forest.getValueAt(x, i) != 0 && forest.getValueAt(x, i) < h {
 					rightDist++
 				}
 
-				if matrix[x][i] >= h {
+				if forest.getValueAt(x, i) >= h {
 					rightDist++
 					break
 				}
@@ -181,4 +159,32 @@ func BestScenicScore(path string) int {
 	}
 
 	return bestScenicScore
+}
+
+type forest struct {
+	lines []string
+	trees map[int]map[int]int
+}
+
+func newForest(lines []string) *forest {
+	return &forest{
+		lines: lines,
+		trees: map[int]map[int]int{},
+	}
+}
+
+func (f *forest) getValueAt(x, y int) int {
+	if f.trees[x] == nil {
+		f.trees[x] = map[int]int{}
+	}
+
+	if f.trees[x][y] != 0 {
+		return f.trees[x][y]
+	}
+
+	line := f.lines[x]
+	height, _ := strconv.Atoi(line[y : y+1])
+	f.trees[x][y] = height
+
+	return height
 }
