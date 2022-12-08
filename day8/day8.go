@@ -79,6 +79,7 @@ func VisibleTrees(path string) int {
 	return visible
 }
 
+// BestScenicScore == Part 2
 func BestScenicScore(path string) int {
 	lines := helpers.ReadLines(path)
 	height := len(lines)
@@ -97,12 +98,9 @@ func BestScenicScore(path string) int {
 
 			i := x - 1
 			for i >= 0 {
-				if forest.getValueAt(i, y) < h {
-					aboveDist++
-				}
+				aboveDist++
 
 				if forest.getValueAt(i, y) >= h {
-					aboveDist++
 					break
 				}
 
@@ -111,12 +109,9 @@ func BestScenicScore(path string) int {
 
 			i = x + 1
 			for i < height {
-				if forest.getValueAt(i, y) < h {
-					belowDist++
-				}
+				belowDist++
 
 				if forest.getValueAt(i, y) >= h {
-					belowDist++
 					break
 				}
 
@@ -125,12 +120,12 @@ func BestScenicScore(path string) int {
 
 			i = y - 1
 			for i >= 0 {
-				if forest.getValueAt(x, i) != 0 && forest.getValueAt(x, i) < h {
+				other := forest.getValueAt(x, i)
+				if other != 0 {
 					leftDist++
 				}
 
-				if forest.getValueAt(x, i) >= h {
-					leftDist++
+				if other >= h {
 					break
 				}
 
@@ -139,12 +134,12 @@ func BestScenicScore(path string) int {
 
 			i = y + 1
 			for i < width {
-				if forest.getValueAt(x, i) != 0 && forest.getValueAt(x, i) < h {
+				other := forest.getValueAt(x, i)
+				if other != 0 {
 					rightDist++
 				}
 
-				if forest.getValueAt(x, i) >= h {
-					rightDist++
+				if other >= h {
 					break
 				}
 
