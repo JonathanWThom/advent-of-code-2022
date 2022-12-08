@@ -10,14 +10,11 @@ import (
 func VisibleTrees(path string) int {
 	var visible int
 
-	lines := helpers.ReadLines(path)
-	height := len(lines)
-	width := len(lines[0])
-	forest := newForest(lines)
+	forest := newForest(path)
 
-	for x := 0; x < height; x++ {
-		for y := 0; y < width; y++ {
-			if x == 0 || x == height-1 || y == 0 || y == width-1 {
+	for x := 0; x < forest.height; x++ {
+		for y := 0; y < forest.width; y++ {
+			if x == 0 || x == forest.height-1 || y == 0 || y == forest.width-1 {
 				visible++
 				continue
 			}
@@ -39,7 +36,7 @@ func VisibleTrees(path string) int {
 
 			// if any below are taller
 			i = x + 1
-			for i < height {
+			for i < forest.height {
 				if forest.getValueAt(i, y) >= h {
 					invisibleCounter++
 					break
@@ -61,7 +58,7 @@ func VisibleTrees(path string) int {
 
 			// if any right are taller
 			i = y + 1
-			for i < width {
+			for i < forest.width {
 				if forest.getValueAt(x, i) >= h {
 					invisibleCounter++
 					break
@@ -81,15 +78,12 @@ func VisibleTrees(path string) int {
 
 // BestScenicScore == Part 2
 func BestScenicScore(path string) int {
-	lines := helpers.ReadLines(path)
-	height := len(lines)
-	width := len(lines[0])
-	forest := newForest(lines)
+	forest := newForest(path)
 
 	var bestScenicScore int
 
-	for x := 0; x < height; x++ {
-		for y := 0; y < width; y++ {
+	for x := 0; x < forest.height; x++ {
+		for y := 0; y < forest.width; y++ {
 			h := forest.getValueAt(x, y)
 			var upDist int
 			var downDist int
@@ -108,7 +102,7 @@ func BestScenicScore(path string) int {
 			}
 
 			i = x + 1
-			for i < height {
+			for i < forest.height {
 				downDist++
 
 				if forest.getValueAt(i, y) >= h {
@@ -133,7 +127,7 @@ func BestScenicScore(path string) int {
 			}
 
 			i = y + 1
-			for i < width {
+			for i < forest.width {
 				other := forest.getValueAt(x, i)
 				if other != 0 {
 					rightDist++
@@ -157,14 +151,20 @@ func BestScenicScore(path string) int {
 }
 
 type forest struct {
-	lines []string
-	trees map[int]map[int]int
+	lines  []string
+	trees  map[int]map[int]int
+	height int
+	width  int
 }
 
-func newForest(lines []string) *forest {
+func newForest(path string) *forest {
+	lines := helpers.ReadLines(path)
+
 	return &forest{
-		lines: lines,
-		trees: map[int]map[int]int{},
+		lines:  lines,
+		trees:  map[int]map[int]int{},
+		height: len(lines),
+		width:  len(lines[0]),
 	}
 }
 
