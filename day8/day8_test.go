@@ -12,16 +12,16 @@ func TestVisibleTrees(t *testing.T) {
 		VisibleTrees,
 		"VisibleTrees",
 		21,
-		0,
+		1859,
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestBestScenicScore(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		BestScenicScore,
+		"BestScenicScore",
+		8,
+		332640,
 	)
 }
