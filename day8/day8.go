@@ -91,14 +91,14 @@ func BestScenicScore(path string) int {
 	for x := 0; x < height; x++ {
 		for y := 0; y < width; y++ {
 			h := forest.getValueAt(x, y)
-			var aboveDist int
-			var belowDist int
+			var upDist int
+			var downDist int
 			var leftDist int
 			var rightDist int
 
 			i := x - 1
 			for i >= 0 {
-				aboveDist++
+				upDist++
 
 				if forest.getValueAt(i, y) >= h {
 					break
@@ -109,7 +109,7 @@ func BestScenicScore(path string) int {
 
 			i = x + 1
 			for i < height {
-				belowDist++
+				downDist++
 
 				if forest.getValueAt(i, y) >= h {
 					break
@@ -146,7 +146,7 @@ func BestScenicScore(path string) int {
 				i++
 			}
 
-			scenicScore := aboveDist * belowDist * leftDist * rightDist
+			scenicScore := upDist * downDist * leftDist * rightDist
 			if scenicScore > bestScenicScore {
 				bestScenicScore = scenicScore
 			}
