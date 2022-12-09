@@ -111,12 +111,6 @@ func (k *knot) follow(other knot) {
 }
 
 func (k *knot) moveToPosition(xDelta, yDelta int) {
-	if xDelta > 1 {
-		panic("ahhh!")
-	}
-	if yDelta > 1 {
-		panic("nooo")
-	}
 	k.x = k.x + xDelta
 	k.y = k.y + yDelta
 
