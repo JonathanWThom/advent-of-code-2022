@@ -22,18 +22,45 @@ func TailPositionsVisited(path string) int {
 
 		for i := 0; i < distance; i++ {
 			head.moveToPosition(xDeltas[direction], yDeltas[direction])
-			//fmt.Printf("tail x: %d, tail y: %d\n", tail.x, tail.y)
 			tail.follow(head)
-			//fmt.Printf("head x: %d, head y: %d\n", head.x, head.y)
-			//fmt.Printf("tail x: %d, tail y: %d\n", tail.x, tail.y)
-			//fmt.Println("------")
 		}
 	}
 
 	return tail.uniqPositions()
 }
 
+// TenKnotRope = Part 2
+func TenKnotRope(path string) int {
+	knots := []*knot{}
+
+	for i := 0; i < 10; i++ {
+		k := knot{visited: map[int]map[int]bool{}}
+		k.moveToPosition(0, 0)
+		knots = append(knots, &k)
+	}
+
+	for _, line := range helpers.ReadLines(path) {
+		instructions := strings.Split(line, " ")
+		direction := instructions[0]
+		distance, _ := strconv.Atoi(instructions[1])
+
+		for i := 0; i < distance; i++ {
+			for j, knot := range knots {
+				if j == 0 {
+					knot.moveToPosition(xDeltas[direction], yDeltas[direction])
+					continue
+				}
+
+				knot.follow(*knots[j-1])
+			}
+		}
+	}
+
+	return knots[len(knots)-1].uniqPositions()
+}
+
 type knot struct {
+	tail    *knot
 	x       int
 	y       int
 	visited map[int]map[int]bool
@@ -63,28 +90,34 @@ func (k *knot) follow(other knot) {
 	xDist := math.Abs(float64(xDelta))
 	yDist := math.Abs(float64(yDelta))
 
-	if xDist == 0 && yDist > 1 || xDist == 1 && yDist > 1 {
+	if xDist <= 1 && yDist > 1 {
 		if k.y > other.y {
-			k.moveToPosition(xDelta, yDelta+1)
+			k.moveToPosition(xDelta, -1)
 			return
 		}
 
-		k.moveToPosition(xDelta, yDelta-1)
+		k.moveToPosition(xDelta, 1)
 		return
 	}
 
-	if yDist == 0 && xDist > 1 || yDist == 1 && xDist > 1 {
+	if yDist <= 1 && xDist > 1 {
 		if k.x > other.x {
-			k.moveToPosition(xDelta+1, yDelta)
+			k.moveToPosition(-1, yDelta)
 			return
 		}
 
-		k.moveToPosition(xDelta-1, yDelta)
+		k.moveToPosition(1, yDelta)
 		return
 	}
 }
 
 func (k *knot) moveToPosition(xDelta, yDelta int) {
+	if xDelta > 1 {
+		panic("ahhh!")
+	}
+	if yDelta > 1 {
+		panic("nooo")
+	}
 	k.x = k.x + xDelta
 	k.y = k.y + yDelta
 
@@ -104,8 +137,4 @@ func (k *knot) uniqPositions() int {
 	}
 
 	return count
-}
-
-func Part2(path string) int {
-	return 0
 }
