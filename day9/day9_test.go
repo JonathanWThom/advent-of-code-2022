@@ -15,13 +15,27 @@ func TestTailPositionsVisited(t *testing.T) {
 		6503,
 	)
 }
+func TestTenKnotRope(t *testing.T) {
+	t.Run("Auxillary input", func(t *testing.T) {
 
-//func TestTenKnotRope(t *testing.T) {
-//helpers.TestsForFunction(
-//t,
-//TenKnotRope,
-//"TenKnotRope",
-//1,
-//0,
-//)
-//}
+		actual := TenKnotRope("aux_input.txt")
+
+		if actual != 36 {
+			t.Errorf(
+				"%s(%s) returned %v, expected %v",
+				"TenKnotRope",
+				"aux_input.txt",
+				actual,
+				36,
+			)
+		}
+	})
+
+	helpers.TestsForFunction(
+		t,
+		TenKnotRope,
+		"TenKnotRope",
+		1,
+		0,
+	)
+}

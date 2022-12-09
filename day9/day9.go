@@ -60,7 +60,6 @@ func TenKnotRope(path string) int {
 }
 
 type knot struct {
-	tail    *knot
 	x       int
 	y       int
 	visited map[int]map[int]bool
