@@ -1,6 +1,7 @@
 package day10
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -45,6 +46,51 @@ func SignalStrengths(path string) int {
 	return sum
 }
 
-func Part2(path string) int {
+// CrtImage = Part 2
+func CrtImage(path string) int {
+	x := 1
+	var cycle int
+	xAtCycle := map[int]int{}
+
+	for _, line := range helpers.ReadLines(path) {
+		sections := strings.Split(line, " ")
+		instruction := sections[0]
+		var value int
+		if len(sections) > 1 {
+			value, _ = strconv.Atoi(sections[1])
+		}
+
+		if instruction == "noop" {
+			cycle++
+			// draw pixel
+			xAtCycle[cycle] = x
+			continue
+		}
+
+		if instruction == "addx" {
+			cycle++
+			// draw pixel
+			xAtCycle[cycle] = x
+			cycle++
+			// draw pixel
+			x += value
+			xAtCycle[cycle] = x
+		}
+	}
+
+	for i := 0; i < 240; i++ {
+		pos := i % 40
+		if xAtCycle[i] == pos || xAtCycle[i]-1 == pos || xAtCycle[i]+1 == pos {
+			fmt.Printf("#")
+		} else {
+			fmt.Printf(".")
+		}
+
+		if pos == 0 {
+			fmt.Println("")
+		}
+
+	}
+
 	return 0
 }
