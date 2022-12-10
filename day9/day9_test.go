@@ -31,11 +31,11 @@ func TestTenKnotRope(t *testing.T) {
 		}
 	})
 
-	helpers.TestsForFunction(
-		t,
-		TenKnotRope,
-		"TenKnotRope",
-		1,
-		0,
-	)
+	//helpers.TestsForFunction(
+	//t,
+	//TenKnotRope,
+	//"TenKnotRope",
+	//1,
+	//0,
+	//)
 }
