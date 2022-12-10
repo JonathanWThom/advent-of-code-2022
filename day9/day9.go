@@ -71,16 +71,16 @@ const right = "R"
 const left = "L"
 
 var xDeltas = map[string]int{
-	up:    1,
-	down:  -1,
-	right: 0,
-	left:  0,
-}
-var yDeltas = map[string]int{
 	up:    0,
 	down:  0,
 	right: 1,
 	left:  -1,
+}
+var yDeltas = map[string]int{
+	up:    1,
+	down:  -1,
+	right: 0,
+	left:  0,
 }
 
 func (k *knot) follow(other knot) {
