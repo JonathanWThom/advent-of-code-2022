@@ -16,12 +16,12 @@ func TestMonkeyBusiness(t *testing.T) {
 	)
 }
 
-func TestPart2(t *testing.T) {
+func TestMonkeyBusinessTenThousand(t *testing.T) {
 	helpers.TestsForFunction(
 		t,
-		Part2,
-		"Part2",
-		0,
-		0,
+		MonkeyBusinessTenThousand,
+		"MonkeyBusinessTenThousand",
+		2713310158,
+		14399640002,
 	)
 }

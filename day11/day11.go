@@ -11,16 +11,29 @@ import (
 
 // MonkeyBusiness = Part 1
 func MonkeyBusiness(path string) int {
-	monkeys := createMonkeys(path)
-	fmt.Println(monkeys[0])
+	return monkeyBusiness(path, 20, 3)
+}
 
-	for i := 0; i < 20; i++ {
+// MonkeyBusinessTenThousand = Part 2
+func MonkeyBusinessTenThousand(path string) int {
+	return monkeyBusiness(path, 10000, 1)
+}
+
+func monkeyBusiness(path string, rounds int, divisor int) int {
+	monkeys := createMonkeys(path)
+
+	prod := 1
+	for _, m := range monkeys {
+		prod *= m.testDivisor
+	}
+
+	for i := 0; i < rounds; i++ {
 		for j := 0; j < len(monkeys); j++ {
 			monkey := monkeys[j]
 
 			fmt.Printf("Monkey %d\n", monkey.id)
 			for _, item := range monkey.items {
-				id, item := monkey.inspect(item)
+				id, item := monkey.inspect(item, prod, divisor)
 				monkeys[id].items = append(monkeys[id].items, item)
 				fmt.Printf("Item with worry level %d is thrown to monkey %d\n", item, id)
 			}
@@ -39,13 +52,13 @@ func MonkeyBusiness(path string) int {
 	return counts[0] * counts[1]
 }
 
-func (m *monkey) inspect(item int) (int, int) {
+func (m *monkey) inspect(item int, prod int, divisor int) (int, int) {
 	fmt.Printf("Monkey %d inspects an item with a worry level of %d\n", m.id, item)
 	m.inspectedCount++
 
 	worryLevel := m.worryFunc(item)
 	fmt.Printf("Worry level is multiplied/added by amount to %d\n", worryLevel)
-	worryLevel = worryLevel / 3 // make sure this rounds to integer
+	worryLevel = worryLevel % prod / divisor
 	fmt.Printf("Worry Level is divided by 3 to %d\n", worryLevel)
 	if worryLevel%m.testDivisor == 0 {
 		fmt.Printf("Current worry level is divisible by %d\n", m.testDivisor)
@@ -149,8 +162,4 @@ type monkey struct {
 	testDivisor     int
 	testTrueMonkey  int
 	testFalseMonkey int
-}
-
-func Part2(path string) int {
-	return 0
 }
