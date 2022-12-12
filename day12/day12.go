@@ -10,7 +10,6 @@ import (
 // StepsToBestSignal = Part 1
 func StepsToBestSignal(path string) int {
 	squares := map[int]map[int]*square{}
-	var end square
 	var start square
 
 	for y, line := range helpers.ReadLines(path) {
@@ -21,7 +20,6 @@ func StepsToBestSignal(path string) int {
 
 			if char == "E" {
 				sq.isEnd = true
-				end = sq
 			}
 
 			if char == "S" {
@@ -43,11 +41,10 @@ func StepsToBestSignal(path string) int {
 	var count int
 
 	for {
-		//fmt.Printf("current %v\n", current)
-		current.visit()
-		squares[current.y][current.x] = &current
+		fmt.Printf("current %v\n", current)
+		squares[current.y][current.x].visited = true
 
-		if current.equals(end) {
+		if current.isEnd == true {
 			fullPathCounts = append(fullPathCounts, count)
 			count = 0
 			break
@@ -58,34 +55,52 @@ func StepsToBestSignal(path string) int {
 		var above *square
 		aY, aX := current.aboveCoords()
 		if squares[aY] != nil {
-			sq := squares[aY][aX]
-			above = sq
+			above = squares[aY][aX]
+			//fmt.Printf("above %#v\n", above)
 		}
 
 		var below *square
 		bY, bX := current.belowCoords()
 		if squares[bY] != nil {
-			sq := squares[bY][bX]
-			below = sq
+			below = squares[bY][bX]
+			//fmt.Printf("below %#v\n", below)
 		}
 
 		lY, lX := current.leftCoords()
 		left := squares[lY][lX]
+		//fmt.Printf("left %#v\n", left)
 
 		rY, rX := current.rightCoords()
 		right := squares[rY][rX]
+		//fmt.Printf("right %#v\n", right)
 
 		var visitable []*square
 		for _, sq := range []*square{above, below, left, right} {
 			if current.canVisit(sq) {
+				//fmt.Printf("%#v ", sq)
 				visitable = append(visitable, sq)
 			}
 		}
+		//fmt.Printf("\n\n")
 
 		if len(visitable) == 0 {
 			// dead end
 			fmt.Println("dead end")
-			current = start
+			// instead of this, go back to square just prior to current
+			// and then can keep doing that until a good path is found
+			// will I improperly not use visited nodes this way?
+
+			// not quite right yet
+			count -= 2
+			squares[current.y][current.x].isDeadEnd = true
+			current = *current.prev.prev
+
+			for y, blah := range squares {
+				for x := range blah {
+					squares[y][x].visited = false
+				}
+			}
+
 			continue
 		}
 
@@ -96,19 +111,23 @@ func StepsToBestSignal(path string) int {
 			}
 		}
 
+		oldCurrent := current
 		current = newCurrent
+		current.prev = &oldCurrent
 	}
 
 	return fullPathCounts[0]
 }
 
 type square struct {
-	char    string
-	visited bool
-	isEnd   bool
-	isStart bool
-	x       int
-	y       int
+	isDeadEnd bool
+	char      string
+	visited   bool
+	isEnd     bool
+	isStart   bool
+	x         int
+	y         int
+	prev      *square
 }
 
 func (sq *square) aboveCoords() (int, int) {
@@ -137,6 +156,10 @@ var alphaMap = map[string]int{}
 
 func (sq *square) canVisit(s *square) bool {
 	if s == nil {
+		return false
+	}
+
+	if s.isDeadEnd == true {
 		return false
 	}
 
