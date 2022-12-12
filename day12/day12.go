@@ -27,7 +27,6 @@ func StepsToBestSignal(path string) int {
 			if char == "S" {
 				sq.isStart = true
 				start = sq
-				fmt.Println(start)
 			}
 
 			squares[y][x] = &sq
@@ -44,16 +43,17 @@ func StepsToBestSignal(path string) int {
 	var count int
 
 	for {
+		//fmt.Printf("current %v\n", current)
 		current.visit()
-		count++
 		squares[current.y][current.x] = &current
 
 		if current.equals(end) {
 			fullPathCounts = append(fullPathCounts, count)
 			count = 0
-			fmt.Println("end")
 			break
 		}
+
+		count++
 
 		var above *square
 		aY, aX := current.aboveCoords()
@@ -85,16 +85,21 @@ func StepsToBestSignal(path string) int {
 		if len(visitable) == 0 {
 			// dead end
 			fmt.Println("dead end")
-			break
+			current = start
+			continue
 		}
 
-		fmt.Printf("visitable %v\n", *visitable[0])
-		current = *visitable[0]
-	}
-	fmt.Println(fullPathCounts)
+		var newCurrent = *visitable[0]
+		for _, sq := range visitable {
+			if alphaMap[sq.char] > alphaMap[newCurrent.char] {
+				newCurrent = *sq
+			}
+		}
 
-	return 0
-	//return fullPathCounts[0]
+		current = newCurrent
+	}
+
+	return fullPathCounts[0]
 }
 
 type square struct {
