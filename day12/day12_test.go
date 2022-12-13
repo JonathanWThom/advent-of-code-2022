@@ -6,15 +6,15 @@ import (
 	"github.com/jonathanwthom/advent-of-code-2022/helpers"
 )
 
-func TestStepsToBestSignal(t *testing.T) {
-	helpers.TestsForFunction(
-		t,
-		StepsToBestSignal,
-		"StepsToBestSignal",
-		31,
-		0,
-	)
-}
+//func TestStepsToBestSignal(t *testing.T) {
+//helpers.TestsForFunction(
+//t,
+//StepsToBestSignal,
+//"StepsToBestSignal",
+//31,
+//0,
+//)
+//}
 
 func TestPart2(t *testing.T) {
 	helpers.TestsForFunction(
